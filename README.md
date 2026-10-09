@@ -109,7 +109,7 @@ The current repository contains project documentation and team collaboration fil
 ECE444-PROJECT/
 ├── docs/
 │   ├── requirements.md
-│   └── sprint-report/       
+│   └── sprint-report.pdf       
 ├── frontend/                # Planned UI and map components
 ├── backend/                 # Planned APIs and application logic
 ├── ml/                      # Planned detection and risk models
