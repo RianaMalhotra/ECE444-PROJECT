@@ -68,7 +68,8 @@ The team uses GitHub-based tools for source control, issue tracking, sprint plan
 | GitHub Issues | User stories, requirements, bugs, and development tasks | [Issues](https://github.com/RianaMalhotra/ECE444-PROJECT/issues) |
 | GitHub Projects | Kanban board for sprint planning and progress tracking | [Project Board](https://github.com/users/RianaMalhotra/projects/1) |
 | GitHub Pull Requests | Code review and integration | [Pull Requests](https://github.com/RianaMalhotra/ECE444-PROJECT/pulls) |
-| Repository Documentation | Requirements and project documentation | [Requirements](https://github.com/RianaMalhotra/ECE444-PROJECT/blob/main/docs/requirements.md) |
+| Repository Documentation | Requirements and project documentation | [Requirements](https://github.com/RianaMalhotra/ECE444-PROJECT/blob/main/docs/requirements.md) 
+
 Team collaboration standards are described in [`CONTRIBUTING.md`](CONTRIBUTING.md), [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md), and [`team_workflow.md`](team_workflow.md).
 
 ## Agile Development and Sprint Tracking
