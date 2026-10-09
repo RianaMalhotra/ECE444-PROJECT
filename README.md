@@ -116,7 +116,7 @@ ECE444-PROJECT/
 ├── data-processing/         # Planned data ingestion and validation
 ├── tests/                   # Planned automated tests
 ├── README.md
-├── CONTRIBUTION.md         
+├── CONTRIBUTING.md         
 ├── CODE_OF_CONDUCT.md       
 ├── team_members.md
 └── team_workflow.md
@@ -180,7 +180,6 @@ Team information and collaboration guidelines are available in:
 | GitHub Projects | Kanban board for sprint planning and tracking (Backlog → Ready → In Progress → In Review → Done) | [Ash Detectives Project Board](https://github.com/users/RianaMalhotra/projects/1) |
 | GitHub Issues | User stories and implementation tasks, each linked to its parent user story | [Issues](https://github.com/RianaMalhotra/ECE444-PROJECT/issues) |
 | GitHub Pull Requests | Code review: every change is reviewed by a teammate before merging | [Pull requests](https://github.com/RianaMalhotra/ECE444-PROJECT/pulls) |
-| Instagram (group chat) | Day-to-day team communication and meeting scheduling | Private |
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for our workflow and [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) for team standards.
 
