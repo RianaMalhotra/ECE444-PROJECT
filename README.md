@@ -39,11 +39,19 @@ The following diagram is conceptual; final integration and deployment details wi
 
 ```mermaid
 flowchart TD
-    A[External environmental and geospatial data] --> B[Data Processing]
-    B --> C[AI/ML Detection and Risk Assessment]
-    B --> D[Backend API]
+    A[Frontend - Interactive Map and Dashboard]
+    B[Backend - APIs and Application Logic]
+    C[Data Processing - Environmental and Geospatial Data]
+    D[AI/ML - Detection and Risk Assessment]
+    E[(Application Database)]
+    F[External Environmental Data Sources]
+
+    A <--> B
+    B <--> C
+    B <--> D
+    B <--> E
+    F --> C
     C --> D
-    D --> E[Frontend Dashboard and Interactive Map]
 ```
 
 ## Requirements
@@ -56,12 +64,11 @@ The team uses GitHub-based tools for source control, issue tracking, sprint plan
 
 | Tool | Purpose | URL |
 | --- | --- | --- |
-| GitHub Repository | Source code, documentation, and version control | [Repository](https://github.com/YOUR-ORG/ECE444-PROJECT) |
-| GitHub Issues | User stories, requirements, bugs, and development tasks | [Issues](https://github.com/YOUR-ORG/ECE444-PROJECT/issues) |
-| GitHub Projects | Kanban board for backlog prioritization, sprint planning, assignment, and progress tracking | [[Kanban Board]](https://github.com/users/RianaMalhotra/projects/1) |
-| GitHub Pull Requests | Peer review, discussion, and integration of code changes | [Pull Requests](https://github.com/YOUR-ORG/ECE444-PROJECT/pulls) |
-| GitHub Wiki / Documentation | Requirements and project documentation maintained in the repository | [`docs/requirements.md`](docs/requirements.md) |
-
+| GitHub Repository | Source code, documentation, and version control | [Repository](https://github.com/RianaMalhotra/ECE444-PROJECT) |
+| GitHub Issues | User stories, requirements, bugs, and development tasks | [Issues](https://github.com/RianaMalhotra/ECE444-PROJECT/issues) |
+| GitHub Projects | Kanban board for sprint planning and progress tracking | [Project Board](https://github.com/users/RianaMalhotra/projects/1) |
+| GitHub Pull Requests | Code review and integration | [Pull Requests](https://github.com/RianaMalhotra/ECE444-PROJECT/pulls) |
+| Repository Documentation | Requirements and project documentation | [Requirements](https://github.com/RianaMalhotra/ECE444-PROJECT/blob/main/docs/requirements.md) |
 Team collaboration standards are described in [`CONTRIBUTING.md`](CONTRIBUTING.md), [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md), and [`team_workflow.md`](team_workflow.md).
 
 ## Agile Development and Sprint Tracking
@@ -88,7 +95,7 @@ The repository currently focuses on requirements and collaboration documentation
 ECE444-PROJECT/
 ├── docs/
 │   ├── requirements.md
-│   └── [sprint reports added as submitted]
+│   └── sprint-report.pdf
 ├── frontend/             # Planned UI and interactive map
 ├── backend/              # Planned APIs and application logic
 ├── ml/                   # Planned detection and risk models
