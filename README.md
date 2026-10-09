@@ -58,7 +58,7 @@ The team uses GitHub-based tools for source control, issue tracking, sprint plan
 | --- | --- | --- |
 | GitHub Repository | Source code, documentation, and version control | [Repository](https://github.com/YOUR-ORG/ECE444-PROJECT) |
 | GitHub Issues | User stories, requirements, bugs, and development tasks | [Issues](https://github.com/YOUR-ORG/ECE444-PROJECT/issues) |
-| GitHub Projects | Kanban board for backlog prioritization, sprint planning, assignment, and progress tracking | **[Insert actual project-board URL]** |
+| GitHub Projects | Kanban board for backlog prioritization, sprint planning, assignment, and progress tracking | [[Kanban Board]](https://github.com/users/RianaMalhotra/projects/1) |
 | GitHub Pull Requests | Peer review, discussion, and integration of code changes | [Pull Requests](https://github.com/YOUR-ORG/ECE444-PROJECT/pulls) |
 | GitHub Wiki / Documentation | Requirements and project documentation maintained in the repository | [`docs/requirements.md`](docs/requirements.md) |
 
