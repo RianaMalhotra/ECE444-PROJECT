@@ -52,7 +52,7 @@ Functional and non-functional requirements are documented in [`docs/requirements
 
 ## Project Management Tools and URLs
 
-The team uses GitHub-based tools for source control, issue tracking, sprint planning, and code review. **Replace `YOUR-ORG/ECE444-PROJECT` and the project-board placeholder below with your team's actual public URLs before submission.** If a resource is private, indicate that access is restricted instead of supplying a public link.
+The team uses GitHub-based tools for source control, issue tracking, sprint planning, and code review.
 
 | Tool | Purpose | URL |
 | --- | --- | --- |
