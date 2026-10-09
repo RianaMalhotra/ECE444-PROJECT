@@ -1,189 +1,137 @@
-# Wildfire Early Detection and Risk Assessment Platform — Team Ash Detectives
+# Wildfire Early Detection and Risk Assessment Platform
+
+**Team Ash Detectives | ECE444 – Software Engineering | University of Toronto**
+
+> **Status:** Under development — first implementation sprint. The capabilities described below are planned and will be delivered incrementally.
 
 ## Overview
 
-This project is a **wildfire early-detection and risk-assessment platform** developed for **ECE444 – Software Engineering** at the University of Toronto.
+The Wildfire Early Detection and Risk Assessment Platform is a software engineering project designed to help users identify potential wildfire events and understand wildfire risk in selected geographic areas.
 
-The system combines environmental data, geospatial information, and AI/ML techniques to help detect potential wildfire events and communicate wildfire risk through an interactive map.
+The proposed system combines environmental and geospatial data with AI/ML-based analysis, presenting detection results, risk levels, and contributing conditions through an interactive map. The platform also aims to communicate uncertainty and handle missing data or service failures clearly.
 
-The platform aims to provide users with clear and accessible information about wildfire detections, environmental conditions, and risk levels while handling incomplete or unavailable data reliably.
+## Planned Key Features
 
-## Key Features
+| Feature | Description |
+| --- | --- |
+| Wildfire detection | Analyze relevant data to identify potential wildfire events. |
+| Detection results | Display detected locations, timestamps, and model confidence where available. |
+| Wildfire risk assessment | Assess geographic wildfire risk using relevant environmental factors. |
+| Interactive risk map | Visualize geographic risk levels through a map or heatmap. |
+| Risk details | Allow users to inspect risk levels and contributing environmental conditions for a selected area. |
+| Data availability indicators | Distinguish missing, unavailable, or incomplete information from valid observations. |
+| Failure handling | Handle errors involving external data sources, APIs, and model processing gracefully. |
+| Modular architecture | Separate frontend, backend, data processing, and AI/ML responsibilities. |
+| Automated testing | Introduce tests and continuous integration checks as implementation progresses. |
 
-- **Wildfire Detection** – Analyze available data to identify potential wildfire events.
-- **Detection Results** – Display detected wildfire locations, timestamps, and confidence levels.
-- **Wildfire Risk Assessment** – Calculate wildfire-risk levels using relevant environmental factors.
-- **Interactive Risk Map** – Visualize wildfire-risk information geographically using a heatmap.
-- **Risk Details** – Allow users to select an area and inspect detailed wildfire-risk information.
-- **Environmental Data Handling** – Clearly identify missing or unavailable environmental information.
-- **Failure Handling** – Gracefully handle failures involving external APIs, data sources, and model processing.
-- **Modular Architecture** – Maintain clear interfaces between frontend, backend, AI/ML, and data-processing components.
-- **Automated Testing** – Use automated tests and CI checks to protect critical functionality from regressions.
-
-*These features represent the planned system capabilities and will be implemented incrementally.*
+**Important:** Wildfire risk and detection confidence are different measures. Risk describes the assessed potential for wildfire in an area; detection confidence describes how strongly a model supports a particular detection.
 
 ## System Architecture
 
-The application is designed around four major components.
+The proposed application has four main components:
 
-### Frontend
+1. **Frontend:** Presents an interactive map, wildfire detections, risk details, environmental conditions, and system-status messages.
+2. **Backend:** Exposes application APIs, applies application logic, and coordinates communication among components.
+3. **Data Processing:** Collects, validates, and transforms environmental and geospatial inputs.
+4. **AI/ML:** Analyzes prepared inputs to support wildfire detection and risk assessment.
 
-Provides the user interface and interactive wildfire map. It is responsible for displaying wildfire detections, risk information, environmental data, and system status.
+The following diagram is conceptual; final integration and deployment details will be determined during implementation.
 
-### Backend
-
-Provides APIs used by the frontend and coordinates communication between application components.
-
-### AI/ML
-
-Processes relevant input data to support wildfire detection and risk assessment.
-
-### Data Processing
-
-Collects, validates, and transforms environmental and geospatial data required by the application.
-
-These components use clearly defined interfaces to reduce coupling and improve maintainability, extensibility, and testability.
+```mermaid
+flowchart TD
+    A[External environmental and geospatial data] --> B[Data Processing]
+    B --> C[AI/ML Detection and Risk Assessment]
+    B --> D[Backend API]
+    C --> D
+    D --> E[Frontend Dashboard and Interactive Map]
+```
 
 ## Requirements
 
-The project's functional and non-functional requirements are documented in:
+Functional and non-functional requirements are documented in [`docs/requirements.md`](docs/requirements.md). This document records selected user stories, priorities, rationale, acceptance criteria, and references to their GitHub Issues.
 
-[docs/requirements.md](docs/requirements.md)
+## Project Management Tools and URLs
 
-The requirements document contains the selected user stories, priorities, rationale, acceptance criteria, and references to the corresponding GitHub Issues.
-
-## Project Management
-
-Development is managed using **GitHub Issues** and a **GitHub Projects Kanban board**, following Agile software development practices.
-
-User stories are prioritized based on their importance to the application's core functionality, dependencies, and implementation readiness.
-
-Higher-priority user stories are selected for implementation during each sprint.
-
-The project board follows the workflow:
-
-**Todo → In Progress → Done**
-
-## Project Management Tools
+The team uses GitHub-based tools for source control, issue tracking, sprint planning, and code review. **Replace `YOUR-ORG/ECE444-PROJECT` and the project-board placeholder below with your team's actual public URLs before submission.** If a resource is private, indicate that access is restricted instead of supplying a public link.
 
 | Tool | Purpose | URL |
-|---|---|---|
-| GitHub Repository | Source code, documentation, and version control | [Repository](https://github.com/RianaMalhotra/ECE444-PROJECT) |
-| GitHub Issues | User stories, requirements, bugs, and implementation tasks | [Issues](https://github.com/RianaMalhotra/ECE444-PROJECT/issues) |
-| GitHub Projects | Kanban board for sprint planning, task prioritization, and progress tracking | [Project Board](https://github.com/users/RianaMalhotra/projects/1) |
-| GitHub Pull Requests | Code review, collaboration, and integration of changes | [Pull Requests](https://github.com/RianaMalhotra/ECE444-PROJECT/pulls) |
+| --- | --- | --- |
+| GitHub Repository | Source code, documentation, and version control | [Repository](https://github.com/YOUR-ORG/ECE444-PROJECT) |
+| GitHub Issues | User stories, requirements, bugs, and development tasks | [Issues](https://github.com/YOUR-ORG/ECE444-PROJECT/issues) |
+| GitHub Projects | Kanban board for backlog prioritization, sprint planning, assignment, and progress tracking | **[Insert actual project-board URL]** |
+| GitHub Pull Requests | Peer review, discussion, and integration of code changes | [Pull Requests](https://github.com/YOUR-ORG/ECE444-PROJECT/pulls) |
+| GitHub Wiki / Documentation | Requirements and project documentation maintained in the repository | [`docs/requirements.md`](docs/requirements.md) |
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for our workflow and [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) for team standards.
+Team collaboration standards are described in [`CONTRIBUTING.md`](CONTRIBUTING.md), [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md), and [`team_workflow.md`](team_workflow.md).
 
-### Sprint Planning and Tracking
+## Agile Development and Sprint Tracking
 
-The development process is organized into iterative sprints.
+Development follows an issue-driven, iterative workflow:
 
-Each sprint includes:
-
-1. **Backlog Prioritization** – Review and sort user stories according to their priority and dependencies.
-2. **Sprint Planning** – Select high-priority stories and divide them into actionable development tasks.
-3. **Task Estimation** – Estimate the hours required for each assigned task.
-4. **Implementation** – Develop features using dedicated Git branches.
-5. **Progress Tracking** – Update task status through GitHub Projects.
-6. **Code Review** – Review changes through Pull Requests before merging.
-7. **Sprint Review** – Compare estimated effort against actual time spent and identify improvements for the next sprint.
+1. **Backlog prioritization:** Review user stories based on importance, dependencies, and implementation readiness.
+2. **Sprint planning:** Select high-priority stories and break them into actionable tasks.
+3. **Task estimation:** Assign owners and estimate the hours needed for each task.
+4. **Implementation:** Work on dedicated Git branches and reference related issues.
+5. **Progress tracking:** Update task status on the GitHub Projects board (`Todo → In Progress → Done`).
+6. **Code review:** Submit Pull Requests for review before merging approved changes.
+7. **Sprint review:** Record actual hours, evaluate progress against estimates, and identify improvements.
 
 ### Sprint Documentation
 
-Sprint planning reports summarize completed work, planned tasks, estimated effort, and actual development time.
-
-Reports are maintained in the repository as PDF documents.
-
-Each report includes:
-
-- A prioritized product backlog.
-- A summary of the completed sprint.
-- A plan for the following sprint.
-- Individual task estimates and actual hours.
-- Project management progress and supporting screenshots.
+Sprint reports are maintained in the repository's `docs/` directory as they become available. Each report is intended to include the prioritized backlog, completed work, next-sprint plan, task estimates versus actual hours, and supporting project-management evidence.
 
 ## Repository Structure
 
-The current repository contains project documentation and team collaboration files. The application directories below represent the planned structure as implementation progresses.
+The repository currently focuses on requirements and collaboration documentation. The intended application structure is shown below; **not all listed application directories have been created yet**.
 
 ```text
 ECE444-PROJECT/
 ├── docs/
 │   ├── requirements.md
-│   └── sprint-report.pdf       
-├── frontend/                # Planned UI and map components
-├── backend/                 # Planned APIs and application logic
-├── ml/                      # Planned detection and risk models
-├── data-processing/         # Planned data ingestion and validation
-├── tests/                   # Planned automated tests
+│   └── [sprint reports added as submitted]
+├── frontend/             # Planned UI and interactive map
+├── backend/              # Planned APIs and application logic
+├── ml/                   # Planned detection and risk models
+├── data-processing/      # Planned ingestion and validation
+├── tests/                # Planned automated tests
 ├── README.md
-├── CONTRIBUTING.md         
-├── CODE_OF_CONDUCT.md       
+├── CONTRIBUTING.md
+├── CODE_OF_CONDUCT.md
 ├── team_members.md
 └── team_workflow.md
 ```
 
-The repository structure will evolve as additional application components are implemented.
+This structure is illustrative and will be updated to reflect actual files and directories as development proceeds.
 
-## Testing
+## Testing and Quality Assurance
 
-Automated testing is planned to protect critical functionality and identify regressions throughout development.
+Automated tests and CI checks are planned as the application develops. Testing priorities include:
 
-Testing will focus on:
+- Core functionality and expected user workflows
+- Backend API responses and error handling
+- Environmental and geospatial data validation
+- AI/ML and risk-processing behavior
+- Integration between application components
+- Regression prevention after changes
 
-- Core application functionality
-- API behaviour and response validation
-- Data validation and error handling
-- AI/ML and risk-processing components
-- Integration between major system components
-- Regression prevention
+Testing instructions and CI status will be documented once the corresponding tooling is implemented.
 
-Continuous integration checks will be introduced as the project develops to automate test execution and help maintain code quality.
+## Getting Started
 
-## Development Workflow
-
-Development follows an issue-driven workflow:
-
-1. User stories and requirements are documented and linked to GitHub Issues.
-2. High-priority user stories are selected during sprint planning.
-3. Implementation work is divided into smaller development tasks with estimated effort.
-4. Tasks are assigned and tracked using the GitHub Projects Kanban board.
-5. Developers implement changes on dedicated Git branches.
-6. Changes are submitted through Pull Requests for review.
-7. Reviewed and approved changes are merged into the main branch.
-8. Automated tests are introduced to verify functionality and reduce regressions.
-9. Completed tasks and actual development hours are documented during sprint reviews.
+The application is not yet available as a complete runnable system. Installation requirements, configuration instructions, and local development commands will be added when the initial implementation is ready.
 
 ## Contributing
 
-Team members are expected to follow the project's collaborative development workflow.
-
-Contributions should be associated with relevant GitHub Issues, implemented on dedicated branches, and reviewed through Pull Requests.
-
-Detailed contribution guidelines are provided in [CONTRIBUTING.md](CONTRIBUTING.md).
-
-All contributors are expected to follow the standards described in [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md).
+Team members should link work to relevant GitHub Issues, use dedicated branches, and submit changes through Pull Requests for review. See [`CONTRIBUTING.md`](CONTRIBUTING.md) for the development workflow and [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md) for community and collaboration standards.
 
 ## Team
 
-Developed by **Team Ash Detectives** as part of **ECE444 – Software Engineering** at the University of Toronto.
+Developed by **Team Ash Detectives** for **ECE444 – Software Engineering** at the **University of Toronto**.
 
-Team information and collaboration guidelines are available in:
+See [`team_members.md`](team_members.md) for team information and [`team_workflow.md`](team_workflow.md) for collaboration practices.
 
-- [Team Members](team_members.md)
-- [Team Workflow](team_workflow.md)
+## Current Project Status
 
+🚧 **Under Development — First Implementation Sprint**
 
-
-
-
-## Project Status
-
-🚧 **Under Development**
-
-The project is currently progressing from requirements engineering into its first implementation sprint.
-
-Development priorities include establishing the application structure, implementing high-priority user stories, and introducing foundational testing practices.
-
-Progress is tracked through GitHub Issues, the GitHub Projects board, and sprint planning documentation.
+The team is moving from requirements engineering and backlog prioritization into implementation. Current priorities include establishing the application structure, implementing high-priority user stories, defining interfaces between components, and introducing foundational tests. Progress is tracked through GitHub Issues and the GitHub Projects board.
