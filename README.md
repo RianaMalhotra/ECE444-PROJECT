@@ -172,6 +172,19 @@ Team information and collaboration guidelines are available in:
 - [Team Members](team_members.md)
 - [Team Workflow](team_workflow.md)
 
+
+## Project Management Tools
+
+| Tool | What we use it for | Link |
+|---|---|---|
+| GitHub Projects | Kanban board for sprint planning and tracking (Backlog → Ready → In Progress → In Review → Done) | [Ash Detectives Project Board](https://github.com/users/RianaMalhotra/projects/1) |
+| GitHub Issues | User stories and implementation tasks, each linked to its parent user story | [Issues](https://github.com/RianaMalhotra/ECE444-PROJECT/issues) |
+| GitHub Pull Requests | Code review: every change is reviewed by a teammate before merging | [Pull requests](https://github.com/RianaMalhotra/ECE444-PROJECT/pulls) |
+| Instagram (group chat) | Day-to-day team communication and meeting scheduling | Private |
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for our workflow and [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) for team standards.
+
+
 ## Project Status
 
 🚧 **Under Development**
