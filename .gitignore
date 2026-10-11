@@ -1,0 +1,14 @@
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+
+# Node.js
+node_modules/
+dist/
+
+# Environment
+.env
+.env.*
+!.env.example
