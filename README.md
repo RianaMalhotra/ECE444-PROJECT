@@ -492,6 +492,7 @@ The team uses:
 ### Project Resources
 
 - [GitHub Repository](https://github.com/RianaMalhotra/ECE444-PROJECT)
+- [GitHub Project Board](https://github.com/users/RianaMalhotra/projects/1)
 - [GitHub Issues](https://github.com/RianaMalhotra/ECE444-PROJECT/issues)
 - [GitHub Pull Requests](https://github.com/RianaMalhotra/ECE444-PROJECT/pulls)
 - [Project Requirements](docs/requirements.md)
