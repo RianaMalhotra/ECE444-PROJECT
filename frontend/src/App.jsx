@@ -1,16 +1,69 @@
+
+import { useEffect, useState } from "react";
+import { fetchRiskAreas } from "./services/riskApi";
 import { MapContainer, TileLayer, Circle, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 
-const riskAreas = [
-  { id: 1, lat: 45.42, lng: -75.69, risk: "HIGH", color: "red" },
-  { id: 2, lat: 45.60, lng: -78.40, risk: "MODERATE", color: "orange" },
-  { id: 3, lat: 44.20, lng: -79.10, risk: "LOW", color: "green" }
-];
+const riskColors = {
+  HIGH: "red",
+  MODERATE: "orange",
+  LOW: "green",
+};
 
 function App() {
+  const [riskAreas, setRiskAreas] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [dataSource, setDataSource] = useState(null);
+
+  useEffect(() => {
+    let active = true;
+
+    async function loadRiskAreas() {
+      try {
+        const result = await fetchRiskAreas();
+
+        if (!active) return;
+
+        setRiskAreas(result.data);
+        setDataSource(result.source);
+        setError(null);
+      } catch (err) {
+        if (!active) return;
+
+        setRiskAreas([]);
+        setError(err.message || "Unable to load wildfire risk data.");
+      } finally {
+        if (active) {
+          setLoading(false);
+        }
+      }
+    }
+
+    loadRiskAreas();
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
   return (
     <div>
       <h1>Wildfire Early Detection & Risk Assessment</h1>
+
+      {loading && (
+        <p>Loading wildfire risk data...</p>
+      )}
+
+      {error && (
+        <p role="alert" style={{ color: "red" }}>
+          Risk data unavailable: {error}
+        </p>
+      )}
+
+      {dataSource === "mock" && !error && (
+        <p>Demo data — not live wildfire risk</p>
+      )}
 
       <MapContainer
         center={[45.4, -77.5]}
@@ -22,23 +75,38 @@ function App() {
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
 
-        {riskAreas.map((area) => (
-          <Circle
-            key={area.id}
-            center={[area.lat, area.lng]}
-            radius={12000}
-            pathOptions={{
-              color: area.color,
-              fillColor: area.color,
-              fillOpacity: 0.5
-            }}
-          >
-            <Popup>
-              Wildfire Risk: {area.risk}
-              <p>Demo data — not live wildfire risk</p>
-            </Popup>
-          </Circle>
-        ))}
+        {riskAreas.map((area) => {
+          const color = riskColors[area.risk_level] || "gray";
+
+          return (
+            <Circle
+              key={area.id}
+              center={[area.latitude, area.longitude]}
+              radius={12000}
+              pathOptions={{
+                color: color,
+                fillColor: color,
+                fillOpacity: 0.5,
+              }}
+            >
+              <Popup>
+                <strong>
+                  Wildfire Risk: {area.risk_level}
+                </strong>
+
+                <p>
+                  Latitude: {area.latitude}
+                  <br />
+                  Longitude: {area.longitude}
+                </p>
+
+                {dataSource === "mock" && (
+                  <p>Demo data — not live wildfire risk</p>
+                )}
+              </Popup>
+            </Circle>
+          );
+        })}
       </MapContainer>
     </div>
   );
