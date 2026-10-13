@@ -5,3 +5,5 @@ node_modules/
 dist/
 .venv/
 .env
+# Raw and cleaned FIRMS data (download locally, do not commit)
+data-processing/data/
