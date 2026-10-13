@@ -1,5 +1,0 @@
-Flask
-flask-cors
-pytest
-psycopg[binary]
-python-dotenv
