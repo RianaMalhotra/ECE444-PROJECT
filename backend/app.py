@@ -1,7 +1,8 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from flask_cors import CORS
 
-from db import check_database
+from db import check_database, get_connection
+from services.risk_scoring import count_nearby_detections, score_area
 
 app = Flask(__name__)
 CORS(app, resources={
@@ -22,6 +23,35 @@ def database_health_check():
     if ok:
         return jsonify({"status": "ok", "message": "Database is reachable"}), 200
     return jsonify({"status": "unavailable", "message": reason}), 503
+
+@app.route("/api/risk-score", methods=["POST"])
+def risk_score():
+    """Score one area from environmental inputs (#21).
+
+    JSON body: any of temperature_c, relative_humidity_pct, wind_speed_kmh,
+    precipitation_mm, vegetation_index, slope_deg, nearby_detections.
+    If latitude/longitude are given and nearby_detections is not, the fire
+    history is counted from the detections table. If the database can't be
+    reached, history is treated as a missing input instead of failing.
+    """
+    body = request.get_json(silent=True)
+    if not isinstance(body, dict):
+        return jsonify({"status": "error", "message": "Request body must be a JSON object"}), 400
+
+    inputs = dict(body)
+    lat, lon = body.get("latitude"), body.get("longitude")
+    has_location = (
+        all(isinstance(v, (int, float)) and not isinstance(v, bool) for v in (lat, lon))
+        and -90 <= lat <= 90 and -180 <= lon <= 180
+    )
+    if inputs.get("nearby_detections") is None and has_location:
+        try:
+            with get_connection() as conn:
+                inputs["nearby_detections"] = count_nearby_detections(conn, lat, lon)
+        except Exception:
+            inputs["nearby_detections"] = None
+
+    return jsonify({"status": "success", "data": score_area(inputs)}), 200
 
 @app.route("/api/risk-areas", methods=["GET"])
 def get_risk_areas():
