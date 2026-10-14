@@ -133,5 +133,5 @@ except psycopg.Error as error:
     fail("Query", str(error).replace(unquote(password), "****"), "Send this exact message to the team chat.")
 ok("Database login", f"PostGIS {version}, {count:,} detections in the table")
 
-print("\nAll checks passed. Run the backend from the backend/ folder:  cd backend && python app.py\n"
+print("\nAll checks passed. Run the backend from the backend/ folder:  cd backend, then python app.py\n"
       "then open http://127.0.0.1:5000/api/health/db")
