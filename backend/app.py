@@ -1,6 +1,8 @@
 from flask import Flask, jsonify
 from flask_cors import CORS
 
+from db import check_database
+
 app = Flask(__name__)
 CORS(app, resources={
     r"/api/*": {"origins": "http://localhost:5173"}
@@ -13,6 +15,13 @@ def health_check():
         "status": "ok",
         "message": "Wildfire Detection API is running"
     }), 200
+
+@app.route("/api/health/db", methods=["GET"])
+def database_health_check():
+    ok, reason = check_database()
+    if ok:
+        return jsonify({"status": "ok", "message": "Database is reachable"}), 200
+    return jsonify({"status": "unavailable", "message": reason}), 503
 
 @app.route("/api/risk-areas", methods=["GET"])
 def get_risk_areas():
