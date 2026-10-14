@@ -584,7 +584,7 @@ For collaboration practices, see:
 
 ---
 
-## October 2026 Implementation Update
+## M3 and M4 Implementation Update
 
 The sections above document the original project goals, setup instructions, architecture, project links, and team workflow. The following updates clarify features added since that README was first written. **The three circles on the React map still come from mock data**, not live risk assessments.
 
