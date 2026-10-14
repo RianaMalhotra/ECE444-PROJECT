@@ -1,583 +1,159 @@
+# Wildfire Early Detection and Risk Assessment
 
-# Wildfire Early Detection and Risk Assessment Platform
+**Team Ash Detectives | ECE444 Software Engineering | University of Toronto**
 
-**Team Ash Detectives | ECE444 – Software Engineering | University of Toronto**
+> **Status: Active development (October 2026).** The React/Flask prototype works with **three mock risk areas**. Risk scoring, FIRMS cleaning, a configurable confidence threshold, and Supabase/PostGIS integration code exist separately. **This is not a live wildfire monitoring or emergency alert system.**
 
-> **Project Status:** Active Development — Functional React–Flask Prototype  
-> The application currently supports an interactive wildfire risk map, backend API communication, detection input validation, and automated backend testing. Wildfire risk values displayed in the current prototype are mock data and do not represent real-time wildfire conditions.
+## Current implementation
 
-## 1. Overview
+| Feature | Status | What it actually does |
+| --- | --- | --- |
+| React/Vite frontend | Implemented | Interactive Leaflet map with OpenStreetMap tiles |
+| Risk heatmap (#22) | Prototype | Three colored circular regions (HIGH, MODERATE, LOW), not a continuous heatmap |
+| React–Flask integration | Implemented | Fetches `GET /api/risk-areas` and displays loading/error/demo-data notices |
+| Risk areas endpoint | Mock | Returns three static coordinates and risk levels with `source: "mock"` |
+| Detection validation (#20) | Implemented | Rejects missing/invalid coordinates, timestamps and unavailable input |
+| Weighted risk scoring (#21) | Implemented separately | Calculates a 0–100 score from seven factors; **not yet connected to the map** |
+| Confidence threshold (#19) | Implemented | Configurable `MIN_DETECTION_CONFIDENCE`, currently defaulting to **20**; provisional backtest |
+| NASA FIRMS processing | Scripts implemented | Cleaning, normalization, deduplication and database loading utilities |
+| Supabase PostgreSQL/PostGIS | Schema and connector implemented | Database connectivity and population must be verified in the actual environment |
+| Automated testing | Tests implemented | Backend pytest coverage for APIs, validation, risk scoring and mocked database checks |
 
-The Wildfire Early Detection and Risk Assessment Platform is a software engineering project designed to help users identify potential wildfire events, explore geographic wildfire risk, and understand environmental conditions contributing to risk.
+**Detection confidence and wildfire risk are different measures.** The displayed mock risk levels are neither real detection confidence nor calculated live environmental risk.
 
-The platform aims to combine environmental and geospatial information with AI/ML-based analysis and present results through an interactive web dashboard.
+## API (Flask: backend/app.py)
 
-The long-term objective is to support understandable, reliable wildfire risk information while clearly communicating detection confidence, environmental conditions, data availability, and system limitations.
+| Method | Route | Behavior |
+| --- | --- | --- |
+| GET | `/api/health` | Flask application health |
+| GET | `/api/health/db` | Database check: HTTP 200 when reachable, HTTP 503 otherwise |
+| GET | `/api/risk-areas` | Three static demo risk areas |
+| POST | `/api/risk-score` | Weighted score from supplied JSON environmental inputs; optionally queries nearby detections when coordinates are given |
 
-The application is being developed incrementally using Agile software engineering practices.
+The risk-scoring response contains `risk_score`, `risk_level`, `is_complete`, `missing_inputs`, `coverage`, `factor_scores` and `model_version`. Missing inputs are not fabricated; insufficient coverage results in a null score. The current model is a first-version heuristic, **not a validated wildfire forecast**.
 
-## 2. Current Implementation
+Example:
 
-The initial application prototype includes:
-
-| Feature | Status | Description |
-|---|---|---|
-| React frontend | Implemented | Web interface built using React and Vite |
-| Interactive geographic map | Implemented | Leaflet map with OpenStreetMap tiles |
-| Risk visualization | Prototype | Colored circles representing HIGH, MODERATE, and LOW risk |
-| Flask backend | Implemented | Python backend exposing REST-style API endpoints |
-| Backend health endpoint | Implemented | Checks whether the Flask API is running |
-| Risk data endpoint | Prototype | Returns three mock wildfire risk areas |
-| Frontend–backend integration | Implemented | React fetches risk data from Flask |
-| Input validation | Implemented as a utility | Validates detection input structure, coordinates, and timestamps |
-| Loading and error handling | Implemented | Displays loading and API failure messages |
-| Automated backend testing | Implemented | Pytest coverage for initial API and validation functionality |
-| AI/ML wildfire detection | In development | Planned detection pipeline and confidence reporting |
-| Environmental risk scoring | In development | Integration of environmental conditions and risk calculations |
-| Continuous geographic heatmap | Planned | More detailed risk visualization beyond the current circles |
-| Live environmental data | Planned | Integration of real external environmental data sources |
-
-**Important:** The current application is a functional development prototype, not an operational wildfire monitoring or emergency alert service.
-
-## 3. Key Features
-
-### 3.1 Interactive Wildfire Risk Map
-
-The frontend uses React, React Leaflet, Leaflet, and OpenStreetMap to display geographic wildfire risk information.
-
-The current prototype supports:
-
-- Interactive map navigation and zooming.
-- Geographic markers represented by colored circles.
-- HIGH, MODERATE, and LOW risk categories.
-- Clickable popups displaying risk information.
-- Risk areas loaded from the Flask backend.
-- Clear identification of demonstration data.
-
-Current risk visualization:
-
-| Risk Level | Color |
-|---|---|
-| HIGH | Red |
-| MODERATE | Orange |
-| LOW | Green |
-
-The current visualization uses discrete circular regions. A continuous heatmap is a future enhancement.
-
-### 3.2 Flask Backend API
-
-The backend is implemented using Python and Flask.
-
-It provides API endpoints for application health monitoring and prototype risk-data retrieval.
-
-#### GET /api/health
-
-Returns the operational status of the Flask application.
-
-Example response:
-
-```json
-{
-  "status": "ok",
-  "message": "Wildfire Detection API is running"
-}
+```bash
+curl -X POST http://127.0.0.1:5000/api/risk-score -H "Content-Type: application/json" -d '{"temperature_c":32,"relative_humidity_pct":20,"wind_speed_kmh":40,"precipitation_mm":0,"vegetation_index":0.6,"slope_deg":15,"nearby_detections":500}'
 ```
 
-#### GET /api/risk-areas
-
-Returns prototype wildfire risk information.
-
-Example response:
-
-```json
-{
-  "status": "success",
-  "source": "mock",
-  "data": [
-    {
-      "id": 1,
-      "latitude": 45.42,
-      "longitude": -75.69,
-      "risk_level": "HIGH"
-    },
-    {
-      "id": 2,
-      "latitude": 45.60,
-      "longitude": -78.40,
-      "risk_level": "MODERATE"
-    },
-    {
-      "id": 3,
-      "latitude": 44.20,
-      "longitude": -79.10,
-      "risk_level": "LOW"
-    }
-  ]
-}
-```
-
-These coordinates and classifications are demonstration values. They are not generated from live environmental observations or a deployed risk-scoring model.
-
-### 3.3 Detection Input Validation
-
-The backend contains detection input validation functionality.
-
-The validation utility checks:
-
-- Whether the supplied detection input is a dictionary.
-- Presence of required geographic coordinates.
-- Presence and format of the timestamp.
-- Valid latitude and longitude ranges.
-- Handling of invalid or incomplete inputs.
-
-Invalid input is rejected with an explanatory validation message.
-
-The validation utility is available for integration with the team's detection pipeline. Its existence does not imply that the complete detection pipeline is operational.
-
-### 3.4 Frontend–Backend Communication
-
-The React frontend communicates with the Flask backend using the JavaScript Fetch API.
-
-The frontend:
-
-1. Requests wildfire risk areas from `/api/risk-areas`.
-2. Receives JSON-formatted risk data.
-3. Stores the returned data in React state.
-4. Renders geographic risk areas on the Leaflet map.
-5. Displays loading and error messages when appropriate.
-
-Cross-Origin Resource Sharing (CORS) is configured for local communication between the Vite development server and Flask.
-
-### 3.5 Planned AI/ML Detection and Risk Assessment
-
-The planned detection and risk assessment components will support:
-
-- Analysis of relevant environmental and geographic inputs.
-- Identification of potential wildfire events.
-- Detection confidence reporting.
-- Risk classification based on contributing environmental conditions.
-- Communication of missing or uncertain information.
-- Integration of calculated results with the interactive dashboard.
-
-**Wildfire risk and detection confidence are separate measures.**
-
-Wildfire risk describes the assessed potential for wildfire in a geographic area. Detection confidence describes how strongly a model supports a particular wildfire detection.
-
-These values should be presented separately to avoid misleading users.
-
-## 4. Technology Stack
-
-| Layer | Technologies |
-|---|---|
-| Frontend | React, JavaScript, Vite |
-| Mapping | Leaflet, React Leaflet, OpenStreetMap |
-| Backend | Python, Flask |
-| API Communication | REST-style HTTP endpoints, JSON, Fetch API |
-| Cross-Origin Requests | Flask-CORS |
-| Testing | Pytest, Flask test client |
-| Version Control | Git, GitHub |
-| Project Management | GitHub Issues, GitHub Projects |
-| Collaboration | Pull Requests, code review, Agile sprint planning |
-| AI/ML and Data Processing | Under development |
-
-Additional libraries will be documented as the corresponding features are implemented.
-
-## 5. System Architecture
-
-The project follows a modular structure separating the frontend, backend, data processing, and AI/ML responsibilities.
-
-### Current Prototype Data Flow
-
-```mermaid
-flowchart TD
-    A[React Frontend]
-    B[Leaflet Risk Map]
-    C[Fetch API]
-    D[Flask Backend]
-    E[GET /api/risk-areas]
-    F[Mock Risk Data]
-
-    A --> B
-    A --> C
-    C --> D
-    D --> E
-    E --> F
-    F --> E
-    E --> C
-    C --> B
-```
-
-### Planned Integrated Architecture
-
-```mermaid
-flowchart TD
-    A[External Environmental and Geospatial Sources]
-    B[Data Processing and Validation]
-    C[AI/ML Detection and Risk Assessment]
-    D[Flask Backend API]
-    E[React Dashboard]
-    F[Leaflet Geographic Visualization]
-
-    A --> B
-    B --> C
-    C --> D
-    D --> E
-    E --> F
-```
-
-The second diagram represents the intended architecture. Not all components are fully implemented or integrated.
-
-## 6. Repository Structure
-
-The repository separates application code, tests, documentation, and planned data-processing and machine-learning components.
+## Architecture: current connections
 
 ```text
-ECE444-PROJECT/
-│
-├── backend/
-│   ├── app.py
-│   ├── requirements.txt
-│   ├── services/
-│   │   └── detection_validation.py
-│   └── tests/
-│       ├── test_app.py
-│       └── test_detection_validation.py
-│
-├── frontend/
-│   ├── package.json
-│   ├── package-lock.json
-│   ├── index.html
-│   └── src/
-│       ├── App.jsx
-│       ├── index.css
-│       └── services/
-│           └── riskApi.js
-│
-├── data-processing/
-├── ml/
-├── tests/
-├── docs/
-│   └── requirements.md
-│
-├── .gitignore
-├── README.md
-├── CONTRIBUTING.md
-├── CODE_OF_CONDUCT.md
-├── team_members.md
-└── team_workflow.md
+React + Leaflet -> frontend/src/services/riskApi.js
+                -> Flask GET /api/risk-areas -> three mock circles
+
+Separate backend functionality:
+JSON inputs -> POST /api/risk-score -> weighted risk model
+                                   -> optional Supabase/PostGIS fire-history lookup
+
+NASA FIRMS CSV -> cleaning script -> optional database loader -> PostgreSQL
 ```
 
-This structure highlights the main application and documentation files rather than listing every generated or supporting file.
+The database schema defines detections, monitored areas, environmental observations and risk assessments. It does not establish that ingestion or model evaluation runs automatically.
 
-The `data-processing/`, `ml/`, and top-level `tests/` directories are reserved for their respective development responsibilities. Their presence does not necessarily indicate completed functionality.
+## Getting started
 
-## 7. Getting Started
-
-The following instructions describe how to run the current development prototype locally.
-
-### 7.1 Prerequisites
-
-Install:
-
-- Git
-- Python 3
-- Node.js and npm
-- A code editor such as Visual Studio Code
-
-Ensure Python, Node.js, and npm are available from your terminal.
-
-### 7.2 Clone the Repository
+Prerequisites: Git, Python 3, a modern Node.js version and npm.
 
 ```bash
 git clone https://github.com/RianaMalhotra/ECE444-PROJECT.git
 cd ECE444-PROJECT
 ```
 
-### 7.3 Set Up the Backend
-
-Navigate to the backend directory:
+**Backend (first terminal):**
 
 ```bash
 cd backend
-```
-
-Create a Python virtual environment:
-
-```bash
 python -m venv .venv
 ```
 
-Activate the virtual environment.
-
-**Windows PowerShell:**
-
-```powershell
-.\.venv\Scripts\Activate.ps1
-```
-
-**macOS/Linux:**
-
-```bash
-source .venv/bin/activate
-```
-
-Install the Python dependencies:
+Activate: Windows PowerShell `.\.venv\Scripts\Activate.ps1`; macOS/Linux `source .venv/bin/activate`.
 
 ```bash
 python -m pip install -r requirements.txt
-```
-
-Start the Flask application:
-
-```bash
 python app.py
 ```
 
-The backend should run at:
+Check `http://127.0.0.1:5000/api/health` and `http://127.0.0.1:5000/api/risk-areas`. The mock map does **not** require Supabase.
 
-http://127.0.0.1:5000
-
-Available API endpoints:
-
-- http://127.0.0.1:5000/api/health
-- http://127.0.0.1:5000/api/risk-areas
-
-### 7.4 Set Up the Frontend
-
-Open a second terminal.
-
-From the repository root:
+**Frontend (second terminal, from the repository root):**
 
 ```bash
 cd frontend
-npm install
+npm ci
 npm run dev
 ```
 
-The Vite development server normally runs at:
+Open `http://localhost:5173` (or the URL printed by Vite). The map should show three colored demo circles; clicking a circle displays its risk level and coordinates. With Flask stopped, the UI should show an error.
 
-http://localhost:5173
+The frontend currently hardcodes Flask at `http://127.0.0.1:5000`. Flask CORS currently permits `http://localhost:5173`.
 
-Open the URL shown in the terminal.
+### Optional database setup
 
-The frontend requires the Flask backend to be running to retrieve the prototype wildfire risk data.
+Follow [docs/database.md](docs/database.md). Copy `backend/.env.example` to `backend/.env` and insert the **current** Supabase Session pooler connection string and password. Do not assume the example URL is correct. Never commit credentials.
 
-### 7.5 Expected Application Behavior
+Run Flask and check `http://127.0.0.1:5000/api/health/db`. A 503 means the connection is not confirmed. The migration is at `supabase/migrations/20261014000000_init_schema.sql`.
 
-When both servers are running:
-
-1. The React application loads.
-2. The Leaflet map displays geographic information.
-3. React requests risk areas from Flask.
-4. Flask returns mock risk data.
-5. Three colored risk circles are displayed.
-6. Clicking a circle opens a popup with its risk level.
-7. A demonstration-data notice is visible.
-
-If the backend is unavailable, the frontend displays an error instead of presenting missing data as valid risk information.
-
-### 7.6 Troubleshooting
-
-**Frontend loads but no risk areas appear**
-
-Check that the Flask backend is running and that `/api/risk-areas` returns valid JSON.
-
-**API request fails**
-
-Check the browser developer console and Flask terminal for errors. Verify that the backend is running on port 5000.
-
-**Python dependencies are missing**
-
-Run:
-
-```bash
-python -m pip install -r requirements.txt
-```
-
-from the `backend` directory.
-
-**Frontend dependencies are missing**
-
-Run:
-
-```bash
-npm install
-```
-
-from the `frontend` directory.
-
-**Port already in use**
-
-Stop the existing development server or adjust the port and corresponding API configuration.
-
-## 8. Testing and Quality Assurance
-
-Automated backend testing uses Pytest.
-
-### Run Backend Tests
+### FIRMS cleaning
 
 From the repository root:
 
 ```bash
-cd backend
-python -m pytest tests -v
+python data-processing/firms_cleaning.py path/to/raw.csv path/to/cleaned.csv
 ```
 
-The initial backend test suite covers:
+The script handles MODIS numeric confidence and VIIRS confidence classes. VIIRS classes are mapped to approximate numeric values; these are assumptions, not original VIIRS confidence scores. For loading cleaned rows, see [docs/database.md](docs/database.md).
 
-- Health endpoint response and status code.
-- Risk areas endpoint response and data structure.
-- Valid detection inputs.
-- Missing detection information.
-- Invalid geographic coordinates.
+## Testing
 
-At the time of the initial React–Flask integration, all five backend tests passed locally.
+Backend, from `backend/`:
 
-### Frontend Verification
+```bash
+python -m pytest -q
+```
 
-The frontend has been manually tested for:
+Frontend, from `frontend/`:
 
-- Successful rendering of the Leaflet map.
-- Retrieval of mock risk areas from Flask.
-- Display of HIGH, MODERATE, and LOW risk categories.
-- Display of demonstration-data labels.
+```bash
+npm run build
+npm run lint
+```
 
-Additional frontend unit tests, integration tests, and automated continuous integration checks remain future development priorities.
+See [docs/sprint1-verification.md](docs/sprint1-verification.md) for browser and database smoke checks. Database health tests use mocks; passing tests does **not** prove the live Supabase instance is reachable. This README update does not claim that the full suite or build has been executed.
 
-## 9. Functional and Non-Functional Requirements
+Additional tests for issues #20 and #22 were proposed in PR #41. Their inclusion in `main` depends on whether that PR has been merged.
 
-Project requirements are documented in:
+## Key repository paths
 
-[docs/requirements.md](docs/requirements.md)
+- `frontend/src/App.jsx` — Leaflet map, circles, popups and UI states
+- `frontend/src/services/riskApi.js` — Flask API client
+- `backend/app.py` — Flask endpoints
+- `backend/services/detection_validation.py` — input validation
+- `backend/services/risk_scoring.py` — weighted risk model and database helpers
+- `backend/config.py` — configurable confidence threshold
+- `backend/db.py` — PostgreSQL connection and health check
+- `backend/tests/` — pytest tests
+- `data-processing/firms_cleaning.py` — NASA FIRMS cleaning
+- `data-processing/load_firms_to_db.py` — database loader
+- `ml/` — model/backtest code
+- `supabase/migrations/` — PostGIS schema
+- `docs/database.md` — Supabase setup
+- `docs/threshold-backtest.md` — threshold evaluation
+- `docs/requirements.md` — requirements and acceptance criteria
 
-This document contains the selected user stories, acceptance criteria, priorities, and related GitHub Issues.
+## Not yet complete
 
-The project's key requirements include:
+- Feed real environmental observations and risk assessments into the map instead of mock areas.
+- Connect FIRMS processing, classification and risk scoring into a verified end-to-end pipeline.
+- Display area-specific calculated risk factors and detection confidence separately.
+- Verify the shared database connection, migrations and data ingestion.
+- Improve map visualization beyond three fixed-radius circles.
+- Expand CI, frontend rendering tests, error handling and model evaluation.
 
-- Geographic wildfire detection and risk visualization.
-- Clear distinction between wildfire risk and detection confidence.
-- Explainable risk factors and environmental conditions.
-- Graceful handling of missing or unavailable data.
-- Reliable error reporting.
-- Maintainable and modular application architecture.
+**Safety limitation:** The application does not provide verified real-time detections, emergency alerts, or validated forecasts. Do not use it for emergency decisions.
 
-Implementation progress is tracked through GitHub Issues and the project board.
+## Team and collaboration
 
-## 10. Agile Development and Project Management
-
-Team Ash Detectives follows an issue-driven Agile development workflow.
-
-The team uses:
-
-| Tool | Purpose |
-|---|---|
-| GitHub Issues | User stories, bugs, and implementation tasks |
-| GitHub Projects | Sprint planning and Kanban tracking |
-| Git branches | Isolated feature development |
-| Pull Requests | Peer review and controlled integration |
-| GitHub documentation | Requirements, collaboration standards, and sprint reports |
-
-### Development Workflow
-
-1. Select a prioritized user story or development task.
-2. Create a dedicated Git branch.
-3. Implement the feature or improvement.
-4. Add or update relevant tests.
-5. Run local tests and verify functionality.
-6. Open a Pull Request targeting `main`.
-7. Request teammate review.
-8. Address feedback and merge approved changes.
-9. Update the GitHub Project board and sprint documentation.
-
-### Project Resources
-
-- [GitHub Repository](https://github.com/RianaMalhotra/ECE444-PROJECT)
-- [GitHub Project Board](https://github.com/users/RianaMalhotra/projects/1)
-- [GitHub Issues](https://github.com/RianaMalhotra/ECE444-PROJECT/issues)
-- [GitHub Pull Requests](https://github.com/RianaMalhotra/ECE444-PROJECT/pulls)
-- [Project Requirements](docs/requirements.md)
-- [Contributing Guidelines](CONTRIBUTING.md)
-- [Team Workflow](team_workflow.md)
-
-## 11. Development Progress
-
-### Completed Foundational Work
-
-The following components have been implemented and merged:
-
-- Initial React frontend and Leaflet risk map.
-- Flask backend initialization.
-- Backend health endpoint.
-- Python dependency documentation.
-- Detection input validation utility.
-- Initial automated backend tests.
-- React–Flask API integration.
-- API-based retrieval of mock wildfire risk areas.
-- Frontend loading and error handling.
-- Git ignore configuration for generated files and local dependencies.
-
-### Upcoming Development Priorities
-
-The next development stages will focus on:
-
-1. Integrating actual wildfire risk-scoring results into the Flask API.
-2. Connecting the detection pipeline with input validation.
-3. Incorporating environmental and geospatial data sources.
-4. Displaying contributing environmental risk factors.
-5. Improving risk visualization beyond circular prototype regions.
-6. Strengthening missing-data and service-failure handling.
-7. Expanding automated testing and regression coverage.
-8. Refining the dashboard's usability and accessibility.
-
-These priorities are subject to sprint planning and team coordination.
-
-## 12. Data Reliability and Limitations
-
-The current prototype uses static mock wildfire risk data.
-
-It does not currently provide:
-
-- Verified real-time wildfire observations.
-- Operational wildfire alerts.
-- Validated wildfire forecasts.
-- Production-grade emergency monitoring.
-- Guaranteed detection or risk assessment accuracy.
-
-The platform is an educational software engineering project under active development.
-
-Users should not rely on the prototype for emergency decisions or public safety guidance.
-
-As real data sources and models are integrated, the team intends to communicate uncertainty, missing observations, model confidence, and data freshness clearly.
-
-## 13. Contributing
-
-Contributions should follow the team's established collaboration and review procedures.
-
-Please read:
-
-- [CONTRIBUTING.md](CONTRIBUTING.md)
-- [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)
-- [team_workflow.md](team_workflow.md)
-
-Team members should link implementation work to GitHub Issues, use dedicated branches, include appropriate tests, and request code review before merging.
-
-## 14. Team
-
-**Team Ash Detectives**
-
-ECE444 – Software Engineering  
-University of Toronto
-
-Developed collaboratively as part of the ECE444 course project.
-
-For team membership and responsibilities, see:
-
-[team_members.md](team_members.md)
-
-For collaboration practices, see:
-
-[team_workflow.md](team_workflow.md)
-
----
-
-**Current Status:** Functional development prototype with React–Flask integration. Detection, risk scoring, environmental data integration, and advanced geographic visualization remain under active development.
+Team Ash Detectives uses [GitHub Issues](https://github.com/RianaMalhotra/ECE444-PROJECT/issues), [GitHub Projects](https://github.com/users/RianaMalhotra/projects/1) and peer-reviewed pull requests. See [CONTRIBUTING.md](CONTRIBUTING.md), [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md), [team_workflow.md](team_workflow.md), and [team_members.md](team_members.md).
