@@ -29,7 +29,11 @@ python data-processing/firms_cleaning.py data-processing/data/fire_archive.csv d
 python ml/backtest_threshold.py data-processing/data/cleaned.csv data-processing/data/backtest_results.csv
 ```
 
-It scores thresholds from 0 to 100 (step 5) using FIRMS `type = 0` (presumed vegetation fire) as the positive label, and recommends the threshold with the best F1. Put the recommended value in `DEFAULT_MIN_DETECTION_CONFIDENCE` in `backend/config.py`. The threshold can also be overridden at runtime with the `MIN_DETECTION_CONFIDENCE` environment variable.
+It scores thresholds from 0 to 100 (step 5). The "answer key" is **persistence**: a detection counts as a real fire if another detection appears within 2 km between 1 and 72 hours later (fires keep burning; one-off false hotspots don't). It recommends the threshold with the best Youden's J (true-positive rate minus false-positive rate) among thresholds that still keep at least 90% of real fires.
+
+Options: `--radius-km`, `--window-hours`, `--min-recall`, and `--label type` (uses the FIRMS `type` column instead; for Canada ~99.9% of rows are type 0, so it can't separate thresholds).
+
+Put the recommended value in `DEFAULT_MIN_DETECTION_CONFIDENCE` in `backend/config.py`. The threshold can also be overridden at runtime with the `MIN_DETECTION_CONFIDENCE` environment variable.
 
 ## Tests
 

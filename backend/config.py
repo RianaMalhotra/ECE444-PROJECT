@@ -9,11 +9,11 @@ import os
 # Minimum FIRMS confidence (0-100) for a detection to be shown as a
 # likely wildfire. Detections below this value are filtered out.
 #
-# 30 is PROVISIONAL: it is the lower bound of FIRMS's "nominal"
-# confidence class. Replace it with the value recommended by
-# ml/backtest_threshold.py once the backtest has been run on the
-# historical FIRMS dataset, and record the result in docs/.
-DEFAULT_MIN_DETECTION_CONFIDENCE = 30.0
+# 20 comes from the backtest in ml/backtest_threshold.py on MODIS data for
+# Canada, 2023-2025 (recommended 20, 20, 15): it keeps ~90% of persistent
+# fires. Confidence alone separates real fires from one-off hotspots only
+# weakly, so treat this as provisional. See docs/threshold-backtest.md.
+DEFAULT_MIN_DETECTION_CONFIDENCE = 20.0
 
 
 def get_min_detection_confidence():
